@@ -1,28 +1,20 @@
-name: Build linux distributions
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+
 jobs:
-  build-distrubutions:
-    runs-on: ubuntu-latest
+  upload-app:
+    runs-on: macos-latest
+    name: Input name for the job
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Java JDK
-        uses: actions/setup-java@v2.3.1
+      - uses: actions/checkout@v3
+      - uses: kobiton/upload-mobile-app-github-action@<<version>>
         with:
-          distribution: 'zulu'
-          java-version: '17'
-      - name: Run gradle package task
-        run: |
-          chmod +x gradlew
-          ./gradlew package --no-daemon
-      - name: Upload rpm distribution
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: Rpm distribution
-          path: ./desktop/build/compose/binaries/main/rpm/*
-      - name: Upload deb distribution
-        uses: actions/upload-artifact@v2.2.4
-        with:
-          name: Deb distribution
-          path: ./desktop/build/compose/binaries/main/deb/*
+          kobi_username: ${{ secrets.KOBI_USERNAME }}
+          kobi_api_key: ${{ secrets.KOBI_API_KEY }}
+          upload_app_id: 275643
+          app_name: Android-test
+          app_path: ./app-to-upload/android-test.apk # this is the file to upload
+          app_access: public
+          app_suffix: apk
